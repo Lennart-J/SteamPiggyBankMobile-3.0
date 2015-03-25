@@ -1,0 +1,65 @@
+
+  <ion-view ng-cloak>
+  <ion-nav-title>App Details</ion-nav-title>
+     <ion-content has-bouncing="false" class="main-slider has-header">
+          <div class="card">
+            <ion-item class='noBorder'>
+              <div class="item appName">{{appItem.name}}
+              </div>
+
+               <a class="item item-image">
+               <img ng-if="appItem.appid && appItem.appid.indexOf(',') === -1" ng-src="http://cdn.akamai.steamstatic.com/steam/apps/{{appItem.appid}}/header.jpg">
+                <img ng-if="appItem.packageid && (isNaN(appItem.appid) || appItem.appid.indexOf(',') > -1)" ng-src="http://cdn.akamai.steamstatic.com/steam/subs/{{appItem.packageid}}/header.jpg">
+              </a>
+               <div class="item item-text-wrap no-padding">
+                      <div class="row">
+                        <div class="col platforms no-padding">
+                          <span ng-if="windows"><i class="icon ion-social-windows"></i></span>
+                          <span ng-if="mac"><i class="icon ion-social-apple"></i></span>
+                          <span ng-if="linux"><i class="icon ion-social-tux"></i></span>
+                        </div>
+                        <div class="col discount no-padding">{{appItem.discount}}</div>
+                      
+                        <div class="col price no-padding">
+                          <strike>{{appItem.originalprice}}</strike>
+                          {{appItem.finalprice}}
+                        </div>
+                      </div>
+                </div>
+            </ion-item>
+            <ion-item class='noBorder'>
+              <div class='horizontalTab'>Categories 
+                <div class='categories' ng-repeat='category in categories'>
+                  <img src="{{category}}" alt='Thumbnail' class='categoryIcon'>
+                </div>
+              </div>
+            </ion-item>
+            <ion-item class='noBorder'>
+              <div class='horizontalTab'>Meta-Score
+                <div class='circleContent'>{{metaScore}}</div>
+              </div>
+            </ion-item>
+            <ion-item class='noBorder'>
+              <div class='horizontalTab'>User Tags
+                <div class='circleContent'>
+                  <i class='icon ion-pricetags'></i>
+                </div>
+              </div>
+                <div class='description'>
+                  <div ng-repeat='tag in userTags'>{{tag}}</div>
+                </div> 
+             </ion-item>
+             <ion-item class='noBorder'>
+              <div class='horizontalTab'>Description
+                <div class='circleContent'>
+                  <i class='icon ion-document-text'></i>
+                </div>
+              </div>
+              <div class='item-text-wrap description'>
+            {{description}}</div>
+             </ion-item> 
+             
+          </div>
+          <br/><br/>
+        </ion-content>
+        </ion-view>

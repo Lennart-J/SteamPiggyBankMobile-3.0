@@ -1,0 +1,178 @@
+
+<ion-nav-title>Special Deals</ion-nav-title>
+  <ion-view class="has-header" ng-cloak>
+  <ion-nav-buttons side="left">
+     <button ng-click="toggleLeft()" class="button button-icon icon ion-navicon"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right">
+      <button ng-click="showSearch()" class="button button-icon icon ion-ios-search-strong"></button>
+    </ion-nav-buttons>
+  
+  <ion-side-menus>
+    <ion-side-menu-content drag-content="false" subheader='false'>
+      <ion-slide-box on-slide-changed="slideChanged(index)" class="main-slider" delegate-handle="main-slider" show-pager="true">
+
+        <!-- ********************** -->
+        <!--   First Tab Content    -->
+        <!-- ********************** -->
+
+        <ion-slide on-touch="onTouch()" on-release="onRelease()">
+          <ion-content has-bouncing="false">
+          <div class="card dailydeal" ng-show="dailyDeal">
+            <div class="item item-divider less-padding">
+              Daily Deal
+            </div>
+
+            <a class="item item-image" href="#/appDetails/{{dailyDeal.appid}}">
+              <img ng-src="http://cdn.akamai.steamstatic.com/steam/apps/{{dailyDeal.appid}}/header.jpg" err-src="img/SPB_ImgnotFoundBig.png">
+            </a>
+
+            <div class="item item-text-wrap no-padding">
+              <div class="row">
+                <div class="col platforms no-padding"><span><i class="icon ion-social-windows"></i></span></div>
+                <div class="col discount no-padding">{{dailyDeal.discount}}</div>
+              
+                <div class="col price no-padding"><strike>{{dailyDeal.originalprice}}</strike>{{dailyDeal.finalprice}}<span class="icon-more"><i class="icon ion-more vertical" ng-click="toggleMore(dailyDeal, $event)"></i></span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card specialdeals" ng-show="featuredDeals.length" ng-controller='GalleryCtrl'>
+            <div class="item item-divider less-padding">
+              {{getDealName()}}
+            </div>
+
+            <ion-slide-box does-continue="true" auto-play="true" on-slide-changed="slideChanged(index)" show-pager="false" class="gallery-slider" delegate-handle="gallery-slider">
+              <ion-slide ng-repeat='app in featuredDeals' on-touch="onTouch()" on-release="onRelease()">
+                <a class="details" href="#/appDetails/{{app.appid}}">  
+                  <div class="item item-image">
+                    <img ng-src="{{app.imageUrl}}" err-src="img/SPB_ImgnotFoundBig.png"  alt='Thumbnail' holder>
+                  </div>
+                </a>
+                <div class="item item-text-wrap no-padding">
+                  <div class="item item-text-wrap no-padding">
+                    <div class="row">
+                      <div class="col platforms no-padding">
+                        <span ng-if="app.platforms.windows"><i class="icon ion-social-windows"></i></span>
+                        <span ng-if="app.platforms.mac"><i class="icon ion-social-apple"></i></span>
+                        <span ng-if="app.platforms.linux"><i class="icon ion-social-tux"></i></span>
+                      </div>
+                      <div class="col discount no-padding">{{app.discount}}</div>
+                    
+                      <div class="col price no-padding">
+                        <strike>{{app.originalprice}}</strike>
+                        {{app.finalprice}}
+                         <span class="icon-more"><i class="icon ion-more vertical" ng-click="toggleMore(app, $event)"></i></span>
+                      </div>
+                     
+                    </div>
+                  </div>
+                </div>
+              </ion-slide>
+
+            </ion-slide-box>
+          </div>
+        </ion-content>
+      </ion-slide>
+
+      <!-- ********************** -->
+      <!--   Second Tab Content   -->
+      <!-- ********************** -->
+
+      <ion-slide on-swipe-left="sliding()" on-swipe-right="sliding()" on-swipe-up="scrolling()" on-swipe-down="scrolling()">
+        <ion-content has-bouncing="false" overflow-scroll="false">
+        <ion-refresher
+            pulling-text="Pull to refresh..."
+            on-refresh="doRefresh()">
+          </ion-refresher>
+          <div class="card listitem"
+            collection-repeat="app in appItems | filter:applyFilters"
+            collection-item-width="'49%'"
+            collection-item-height="'145px'"
+            item-render-buffer="8"
+            >
+            <a class="details" href="#/appDetails/{{app.appid}}">
+              <div class="item item-divider">
+                {{app.name}}
+              </div>
+              <ion-item class="item item-image" >
+                <img ng-src="http://cdn.akamai.steamstatic.com/steam/apps/{{app.appid}}/capsule_184x69.jpg" err-src="img/SPB_ImgnotFound.png">
+              </ion-item>
+            </a>
+            <div class="item item-text-wrap no-padding">
+              <div class="row no-padding">
+                <span class="col col discount">{{app.discount}}</span>
+                <span class="col col-67 price"><strike>{{app.originalprice}}</strike>{{app.finalprice}}</span>
+                <span class="col col-10 icon-more" ><i class="icon ion-more vertical" ng-click="toggleMore(app, $event)"></i></span>
+              </div>
+            </div>
+          </div>
+          <br/><br/>
+        </ion-content>
+      </ion-slide>
+
+    </ion-slide-box>
+  </ion-side-menu-content>
+  
+  <!-- ********************** -->
+  <!-- Left Side Menu Content -->
+  <!-- ********************** -->
+
+  <ion-side-menu side="left" class="left-menu" ng-controller="SideMenuCtrl">
+    <ion-content class="left-menu-content has-header">
+    <ion-list>
+      <ion-item class="item item-image">
+        <img src="img/spb_options-header.png">
+      </ion-item >
+      
+      <ion-item class="item item-divider">
+        Filter
+      </ion-item >
+
+      <div ng-repeat="filter in filters">
+        <ion-item class="item item-icon-right" ng-click="toggleDropDown(filter)">
+          <i class="icon" ng-class='{"ion-android-arrow-dropdown" : !isOpen(filter.name), "ion-android-arrow-dropup" : isOpen(filter.name)}'></i>
+          {{filter.name}}
+        </ion-item>
+        <ion-list ng-if="isOpen(filter.name)">
+            <ion-item ng-repeat="value in filter.values" class="inset">
+              {{value.name}}
+
+              <!-- Toggle Inputs -->
+              <label ng-if="value.display === 'toggle'" class="toggle">
+                <input type="checkbox" ng-model="value.value">
+                <div class="track">
+                  <div class="handle"></div>
+                </div>
+              </label>
+
+              <!-- Range Inputs -->
+              <div ng-if="value.display === 'range'" class="range">
+                <div>{{value.value}}</div>
+                <input type="range" name="range" ng-model="value.value" max="{{value.max}}">
+                <div>{{value.max}}</div>
+                
+              </div>
+            </ion-item>
+        </ion-list>
+      </div>
+
+      <ion-item class="item item-divider">
+      </ion-item >
+      <ion-item class="item item-icon-left" ng-click="share()">
+        <i class="icon ion-gear-b"></i>
+        Settings
+      </ion-item >
+      <ion-item class="item-icon-left" ng-click="goToAppDetails()">
+        <i class="icon ion-help-circled"></i>
+        Help &amp; Feedback
+      </ion-item>
+      
+    </ion-list>
+    </ion-content>
+  </ion-side-menu>
+  </ion-side-menus>
+  
+  
+
+  </ion-view>
